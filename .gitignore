@@ -3,3 +3,4 @@ build
 .env
 dist
 .idea
+coverage
