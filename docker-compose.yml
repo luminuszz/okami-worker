@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  worker:
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: "1GB"
+    env_file:
+      - .env
+    restart: always
+    build:
+      context: .
+      dockerfile: "./docker/dockerfile.${DOCKERFILE}"
+
