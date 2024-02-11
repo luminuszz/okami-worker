@@ -5,6 +5,7 @@ import {
   CreateQueueCommand,
   ListQueuesCommand,
   SQSClient,
+  SendMessageCommand,
 } from '@aws-sdk/client-sqs';
 import { ConfigService } from '@nestjs/config';
 import { Consumer } from 'sqs-consumer';
@@ -25,6 +26,19 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
         secretAccessKey: this.config.get('AWS_SECRET_KEY_ACCESS'),
       },
     });
+  }
+  async publish<Payload = unknown>(
+    name: string,
+    payload: Payload,
+  ): Promise<void> {
+    const endpoint = await this.createQueueIfNotExists(name);
+
+    await this.sqs.send(
+      new SendMessageCommand({
+        QueueUrl: endpoint,
+        MessageBody: JSON.stringify(payload),
+      }),
+    );
   }
 
   async registerWorker<Payload = any>(
