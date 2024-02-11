@@ -1,11 +1,12 @@
 import { NotificationProvider } from '../../domain/work/contracts/notification.provider';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class OkamiHttpNotificationProvider implements NotificationProvider {
-
   constructor(private httpService: HttpService) {}
+
+  private logger = new Logger(OkamiHttpNotificationProvider.name);
 
   async notifyNewChapterUnread(
     workId: string,
@@ -16,11 +17,17 @@ export class OkamiHttpNotificationProvider implements NotificationProvider {
     });
   }
 
+  async notifyScrappingReport(
+    workId: string,
+    status: 'success' | 'error',
+  ): Promise<void> {
+    this.logger.log(
+      `Notifying scrapping report for work ${workId} with status ${status}`,
+    );
 
-  async  notifyScrappingReport(workId: string, status: "success" | "error"): Promise<void> {
-    await this.httpService.axiosRef.post("/work/scrapping-report", {
+    await this.httpService.axiosRef.post('/work/scrapping-report', {
       workId,
-      status
-    })
+      status,
+    });
   }
 }

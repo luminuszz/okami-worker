@@ -35,8 +35,6 @@ export class PuppeteerScrapperProvider
       await page.close();
 
       return content.html();
-
-
     } catch (e) {
       throw {
         message: e.message,

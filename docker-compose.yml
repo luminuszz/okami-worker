@@ -5,8 +5,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.5"
-          memory: "1GB"
+          cpus: "2.0"
+          memory: "2GB"
     env_file:
       - .env
     restart: always
@@ -14,3 +14,10 @@ services:
       context: .
       dockerfile: "./docker/dockerfile.${DOCKERFILE}"
 
+
+
+networks:
+  services:
+    name: okami_services
+
+  

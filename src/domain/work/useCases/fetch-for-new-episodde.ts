@@ -42,8 +42,9 @@ export class FetchForNewEpisodeUseCase {
       );
 
       if (!!newEpisode) {
-        this.logger.log(`Found new episode for ${name} - ${id}`);
-        this.logger.log(`New episode: ${newEpisode}`);
+        this.logger.log(
+          `Found new episode for ${name} - ${id} New episode: ${newEpisode}`,
+        );
 
         await this.notification.notifyNewChapterUnread(
           id,
@@ -53,10 +54,9 @@ export class FetchForNewEpisodeUseCase {
         this.logger.warn(`No new episode for ${name} - ${id}`);
       }
 
-      await this.notification.notifyScrappingReport(id, "success")
+      await this.notification.notifyScrappingReport(id, 'success');
     } catch (e) {
-      await this.notification.notifyScrappingReport(id, "error")
-
+      await this.notification.notifyScrappingReport(id, 'error');
     }
   }
 

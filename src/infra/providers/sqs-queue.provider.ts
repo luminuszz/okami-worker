@@ -46,15 +46,12 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
       });
 
       consumer.setMaxListeners(15);
-      consumer.on('error', (err) => {
-        this.logger.error(`ocorrreu um erro  ${err.message}`);
-      });
 
       consumer.on('processing_error', (err) =>
         this.logger.error(`ocorrreu um erro  ${err.message}`),
       );
       consumer.on('message_received', (message) =>
-        this.logger.debug(`Message received: ${JSON.parse(message.Body)}`),
+        this.logger.debug(`Message received: ${JSON.stringify(message.Body)}`),
       );
 
       consumer.on('message_processed', () => {

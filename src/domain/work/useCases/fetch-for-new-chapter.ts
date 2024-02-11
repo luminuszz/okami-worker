@@ -58,24 +58,21 @@ export class FetchForNewChapterUseCase {
       );
 
       if (!!newChapter) {
-        this.logger.log(
-          `Found new chapter for ${name}, chapter -> ${newChapter.capNumber} `,
+        await this.notification.notifyNewChapterUnread(
+          id,
+          newChapter.capNumber,
         );
 
-        this.logger.log(`Marking work ${name} as unread`);
-
-        await this.notification.notifyNewChapterUnread(id, newChapter.capNumber);
-
-        this.logger.log(`work marked with ${name} as unread`);
-
-
+        this.logger.log(
+          `Found new chapter for ${name}, chapter -> ${newChapter.capNumber}, marked as unread`,
+        );
       } else {
         this.logger.warn(`not found new chapter for ${name}`);
       }
 
-      await this.notification.notifyScrappingReport(id, "success")
-    }catch (e) {
-      await this.notification.notifyScrappingReport(id, "error")
+      await this.notification.notifyScrappingReport(id, 'success');
+    } catch (e) {
+      await this.notification.notifyScrappingReport(id, 'error');
     }
   }
 }

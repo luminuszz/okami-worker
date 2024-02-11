@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, vi , it} from 'vitest';
+import { beforeEach, describe, expect, vi, it } from 'vitest';
 import { faker } from '@faker-js/faker';
 import { FetchForNewEpisodeUseCase } from '@app/domain/work/useCases/fetch-for-new-episodde';
 
