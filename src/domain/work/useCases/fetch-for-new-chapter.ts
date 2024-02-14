@@ -31,6 +31,8 @@ export class FetchForNewChapterUseCase {
       `cap. ${chapterString}`,
       `Cap. ${chapterString}`,
       `Cap. ${chapterString}`,
+      `CAP. ${chapterString}`,
+      `CAP.${chapterString}`,
     ];
   };
 
