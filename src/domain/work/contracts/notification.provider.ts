@@ -4,5 +4,8 @@ export abstract class NotificationProvider {
     nextChapter: number,
   ): Promise<void>;
 
-  abstract notifyScrappingReport(workId: string, status: "success" | "error"): Promise<void>;
+  abstract notifyScrappingReport(
+    workId: string,
+    status: 'success' | 'error',
+  ): Promise<void>;
 }

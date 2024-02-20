@@ -16,8 +16,9 @@ export class OkamiHttpNotificationProvider implements NotificationProvider {
     workId: string,
     nextChapter: number,
   ): Promise<void> {
-    await this.httpService.axiosRef.patch(`/work/${workId}/mark-unread`, {
+    await this.queueProvider.publish('work-new-chapter', {
       nextChapter,
+      workId,
     });
   }
 

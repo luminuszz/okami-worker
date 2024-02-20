@@ -74,6 +74,8 @@ export class FetchForNewChapterUseCase {
 
       await this.notification.notifyScrappingReport(id, 'success');
     } catch (e) {
+      this.logger.error(`Error on fetch for new chapter ${name} ${cap}`, e);
+
       await this.notification.notifyScrappingReport(id, 'error');
     }
   }
