@@ -54,8 +54,12 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
         queueUrl: endpoint,
         sqs: this.sqs,
         handleMessage: async (message) => {
-          const payload = JSON.parse(message.Body);
-          return callback(payload);
+          try {
+            const payload = JSON.parse(message.Body);
+            return await callback(payload);
+          } catch (error) {
+            this.logger.error(`Error processing message ${error.message}`);
+          }
         },
       });
 

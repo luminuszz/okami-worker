@@ -1,14 +1,10 @@
 import { NotificationProvider } from '../../domain/work/contracts/notification.provider';
 import { Injectable, Logger } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { QueueProvider } from '@app/domain/work/contracts/queue.provider';
 
 @Injectable()
 export class OkamiHttpNotificationProvider implements NotificationProvider {
-  constructor(
-    private httpService: HttpService,
-    private readonly queueProvider: QueueProvider,
-  ) {}
+  constructor(private readonly queueProvider: QueueProvider) {}
 
   private logger = new Logger(OkamiHttpNotificationProvider.name);
 

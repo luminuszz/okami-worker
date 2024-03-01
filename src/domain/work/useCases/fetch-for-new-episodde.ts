@@ -56,6 +56,7 @@ export class FetchForNewEpisodeUseCase {
 
       await this.notification.notifyScrappingReport(id, 'success');
     } catch (e) {
+      console.log(e);
       await this.notification.notifyScrappingReport(id, 'error');
     }
   }

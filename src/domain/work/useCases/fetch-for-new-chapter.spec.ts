@@ -24,7 +24,7 @@ describe('FetchForNewChapter', () => {
   it('should be able to notify api with new chapter found', async () => {
     const cap = faker.number.int({ min: 1, max: 100 });
 
-    fakeScrapperProvider.extractHtmlFromUrl.mockReturnValue(`cap ${cap + 1}`  );
+    fakeScrapperProvider.extractHtmlFromUrl.mockReturnValue(`cap ${cap + 1}`);
 
     await stu.execute({
       name: faker.internet.domainName(),
