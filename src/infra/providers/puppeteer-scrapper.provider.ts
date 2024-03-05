@@ -28,7 +28,14 @@ export class PuppeteerScrapperProvider
 
       await page.goto(url, { waitUntil: 'networkidle2' });
 
-      const html = await page.evaluate(() => document.body.innerHTML);
+      const html = await page.evaluate(() => {
+        const doc = new DOMParser().parseFromString(
+          document.body.innerHTML,
+          'text/html',
+        );
+
+        return doc.body.textContent;
+      });
 
       const content = cheerio.load(html);
 

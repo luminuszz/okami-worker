@@ -35,6 +35,8 @@ export class FetchForNewEpisodeUseCase {
         matchers: this.stringMatchFilterList(ep),
       }));
 
+      console.log(mappedPossibleEpisodes);
+
       const html = await this.scrapper.extractHtmlFromUrl(url);
 
       const newEpisode = find(mappedPossibleEpisodes, (possibleChapter) =>
@@ -63,15 +65,28 @@ export class FetchForNewEpisodeUseCase {
 
   public stringMatchFilterList = (episode: number) => {
     const parsedEpisode = episode.toString();
-    return [
-      `Episódio ${parsedEpisode}`,
-      `Ep ${parsedEpisode}`,
-      `Eps ${parsedEpisode}`,
-      `episódio ${parsedEpisode}`,
-      `ep. ${parsedEpisode}`,
-      `Ep ${parsedEpisode}`,
-      `Ep. ${parsedEpisode}`,
+
+    const episodeTokens = Array.from({ length: 4 }).map((_, index) =>
+      parsedEpisode.padStart(index, '0'),
+    );
+
+    const tokens = [
+      `Episódio `,
+      `Ep `,
+      `Eps `,
+      `episódio `,
+      `ep. `,
+      `Ep `,
+      `Ep. `,
+      `Episódio `,
+      `Episódio `,
+      `EPISODIO `,
+      `EPISÓDIO `,
     ];
+
+    return tokens.flatMap((token) => {
+      return episodeTokens.map((episodeToken) => token.concat(episodeToken));
+    });
   };
 
   public predictingNextEpisodeList(currentEpisode: number) {
