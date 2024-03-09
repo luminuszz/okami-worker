@@ -4,5 +4,6 @@ module.exports = [
     name: 'okami-worker',
     exec_mode: 'cluster',
     instances: 4,
+    exp_backoff_restart_delay: 100,
   },
 ];

@@ -53,14 +53,7 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
       consumer = Consumer.create({
         queueUrl: endpoint,
         sqs: this.sqs,
-        handleMessage: async (message) => {
-          try {
-            const payload = JSON.parse(message.Body);
-            return await callback(payload);
-          } catch (error) {
-            this.logger.error(`Error processing message ${error.message}`);
-          }
-        },
+        handleMessage: (message) => callback(JSON.parse(message.Body)),
       });
 
       consumer.setMaxListeners(15);
