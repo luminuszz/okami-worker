@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { QueueProvider } from '@app/domain/work/contracts/queue.provider';
+import Sentry from '@sentry/node';
 
 import {
   CreateQueueCommand,
@@ -18,6 +19,8 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
 
   private readonly sqs: SQSClient;
 
+  private readonly sentry: typeof Sentry;
+
   constructor(private readonly config: ConfigService) {
     this.sqs = new SQSClient({
       region: this.config.get('AWS_REGION'),
@@ -25,6 +28,11 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
         accessKeyId: this.config.get('AWS_ACCESS_KEY_ID'),
         secretAccessKey: this.config.get('AWS_SECRET_KEY_ACCESS'),
       },
+    });
+
+    this.sentry.init({
+      dsn: this.config.get('SENTRY_ENDPOINT'),
+      integrations: [],
     });
   }
   async publish<Payload = unknown>(
@@ -58,9 +66,12 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
 
       consumer.setMaxListeners(15);
 
-      consumer.on('processing_error', (err) =>
-        this.logger.error(`ocorrreu um erro  ${err.message}`),
-      );
+      consumer.on('processing_error', (err) => {
+        this.logger.error(`ocorrreu um erro  ${err.message}`);
+
+        this.sentry.captureException(err);
+      });
+
       consumer.on('message_received', (message) =>
         this.logger.debug(`Message received: ${JSON.stringify(message.Body)}`),
       );

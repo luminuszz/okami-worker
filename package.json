@@ -24,6 +24,7 @@
     "@nestjs/config": "^3.0.1",
     "@nestjs/core": "^10.2.4",
     "@nestjs/platform-express": "^10.2.4",
+    "@sentry/node": "^7.107.0",
     "axios": "^1.5.0",
     "cheerio": "1.0.0-rc.12",
     "dotenv": "^16.3.1",
@@ -41,6 +42,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",
+    "@flydotio/dockerfile": "^0.5.3",
     "@nestjs/cli": "10.1.16",
     "@nestjs/schematics": "^10.0.2",
     "@nestjs/testing": "^10.2.4",
