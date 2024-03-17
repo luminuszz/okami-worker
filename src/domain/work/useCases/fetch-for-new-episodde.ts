@@ -35,8 +35,6 @@ export class FetchForNewEpisodeUseCase {
         matchers: this.stringMatchFilterList(ep),
       }));
 
-      console.log(mappedPossibleEpisodes);
-
       const html = await this.scrapper.extractHtmlFromUrl(url);
 
       const newEpisode = find(mappedPossibleEpisodes, (possibleChapter) =>
