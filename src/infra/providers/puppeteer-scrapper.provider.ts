@@ -13,7 +13,7 @@ export class PuppeteerScrapperProvider implements ScrapperProvider {
   async extractHtmlFromUrl(url: string): Promise<string> {
     let browser: Browser;
 
-    const useProxy = !!this.config.get('SCRAPPER_USE_PROXY');
+    const useProxy = !!this.config.get('SCRAPPER_BROWSER');
 
     if (useProxy) {
       browser = await puppeteer.connect({

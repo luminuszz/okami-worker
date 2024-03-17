@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { QueueProvider } from '@app/domain/work/contracts/queue.provider';
-import Sentry from '@sentry/node';
+import * as Sentry from '@sentry/node';
 
 import {
   CreateQueueCommand,
@@ -19,7 +19,7 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
 
   private readonly sqs: SQSClient;
 
-  private readonly sentry: typeof Sentry;
+  private readonly sentry = Sentry;
 
   constructor(private readonly config: ConfigService) {
     this.sqs = new SQSClient({
