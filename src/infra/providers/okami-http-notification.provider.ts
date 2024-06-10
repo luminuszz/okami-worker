@@ -1,4 +1,4 @@
-import { NotificationProvider } from '../../domain/work/contracts/notification.provider';
+import { NotificationProvider } from '@app/domain/work/contracts/notification.provider';
 import { Injectable, Logger } from '@nestjs/common';
 import { QueueProvider } from '@app/domain/work/contracts/queue.provider';
 
