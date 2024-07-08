@@ -32,12 +32,14 @@ export class FetchForNewEpisodeUseCase {
 
       const possibleNextEpisodes = this.predictingNextEpisodeList(episode);
 
-      const tokens = await this.searchToken.getSearchTokens('MANGA');
+      const tokens = await this.searchToken.getSearchTokens('ANIME');
 
       const mappedPossibleEpisodes = possibleNextEpisodes.map((ep) => ({
         episodeNumber: ep,
         matchers: this.stringMatchFilterList(ep, tokens),
       }));
+
+      console.log(mappedPossibleEpisodes);
 
       const html = await this.scrapper.extractHtmlFromUrl(url);
 
