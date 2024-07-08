@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, vi } from 'vitest';
 import { faker } from '@faker-js/faker';
 import { FetchForNewChapterUseCase } from '@app/domain/work/useCases/fetch-for-new-chapter';
+import {
+  SearchTokensProvider,
+  SearchType,
+} from '@app/domain/work/contracts/search-tokens.provider';
 
 const fakeScrapperProvider = {
   extractHtmlFromUrl: vi.fn(),
@@ -11,6 +15,12 @@ const fakeNotificationProvider = {
   notifyScrappingReport: vi.fn(),
 };
 
+const fakeStorageProvider: SearchTokensProvider = {
+  async getSearchTokens(type: SearchType) {
+    return [type];
+  },
+};
+
 describe('FetchForNewChapter', () => {
   let stu: FetchForNewChapterUseCase;
 
@@ -18,6 +28,7 @@ describe('FetchForNewChapter', () => {
     stu = new FetchForNewChapterUseCase(
       fakeNotificationProvider,
       fakeScrapperProvider,
+      fakeStorageProvider,
     );
   });
 
@@ -64,7 +75,7 @@ describe('FetchForNewChapter', () => {
   it('should be able to get a list for possible chapters matchers string', () => {
     const randomChapter = faker.number.int({ min: 1, max: 100 });
 
-    const results = stu.stringMatchFilterList(randomChapter);
+    const results = stu.stringMatchFilterList(randomChapter, ['']);
 
     results.forEach((matcher) => {
       expect(matcher).toContain(randomChapter.toString());

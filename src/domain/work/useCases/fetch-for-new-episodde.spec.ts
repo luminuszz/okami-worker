@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, vi, it } from 'vitest';
 import { faker } from '@faker-js/faker';
 import { FetchForNewEpisodeUseCase } from '@app/domain/work/useCases/fetch-for-new-episodde';
+import {
+  SearchTokensProvider,
+  SearchType,
+} from '@app/domain/work/contracts/search-tokens.provider';
 
 const fakeScrapperProvider = {
   extractHtmlFromUrl: vi.fn(),
@@ -11,6 +15,12 @@ const fakeNotificationProvider = {
   notifyScrappingReport: vi.fn(),
 };
 
+const fakeStorageProvider: SearchTokensProvider = {
+  async getSearchTokens(type: SearchType) {
+    return [type];
+  },
+};
+
 describe('FetchForNewEpisode', () => {
   let stu: FetchForNewEpisodeUseCase;
 
@@ -18,6 +28,7 @@ describe('FetchForNewEpisode', () => {
     stu = new FetchForNewEpisodeUseCase(
       fakeNotificationProvider,
       fakeScrapperProvider,
+      fakeStorageProvider,
     );
   });
 
@@ -68,7 +79,9 @@ describe('FetchForNewEpisode', () => {
   it('should be able to get a list for possible episodes matchers string', () => {
     const randomChapter = faker.number.int({ min: 1, max: 100 });
 
-    const results = stu.stringMatchFilterList(randomChapter);
+    const tokens = ['ANIME'];
+
+    const results = stu.stringMatchFilterList(randomChapter, tokens);
 
     results.forEach((matcher) => {
       expect(matcher).toContain(randomChapter.toString());
