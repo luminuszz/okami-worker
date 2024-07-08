@@ -10,6 +10,8 @@ import { PuppeteerScrapperProvider } from './providers/puppeteer-scrapper.provid
 import { FetchForNewChapterUseCase } from '../domain/work/useCases/fetch-for-new-chapter';
 import { FetchForNewEpisodeUseCase } from '../domain/work/useCases/fetch-for-new-episodde';
 import { Queue } from '../domain/work/queue/Queue';
+import { SearchTokensProvider } from '@app/domain/work/contracts/search-tokens.provider';
+import { OkamiSearchTokensProvider } from '@app/infra/providers/okami-search-tokens-provider';
 
 @Module({
   imports: [
@@ -37,7 +39,10 @@ import { Queue } from '../domain/work/queue/Queue';
       provide: ScrapperProvider,
       useClass: PuppeteerScrapperProvider,
     },
-
+    {
+      provide: SearchTokensProvider,
+      useClass: OkamiSearchTokensProvider,
+    },
     FetchForNewChapterUseCase,
     FetchForNewEpisodeUseCase,
     Queue,

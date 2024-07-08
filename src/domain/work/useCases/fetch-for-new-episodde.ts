@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { find, some } from 'lodash';
 import { NotificationProvider } from '../contracts/notification.provider';
 import { ScrapperProvider } from '../contracts/scrapper.provider';
+import { SearchTokensProvider } from '@app/domain/work/contracts/search-tokens.provider';
 
 export interface FetchForNewEpisodeUseCaseJobPayload {
   episode: number;
@@ -17,6 +18,7 @@ export class FetchForNewEpisodeUseCase {
   constructor(
     private readonly notification: NotificationProvider,
     private readonly scrapper: ScrapperProvider,
+    private readonly searchToken: SearchTokensProvider,
   ) {}
 
   public async execute({
@@ -30,9 +32,11 @@ export class FetchForNewEpisodeUseCase {
 
       const possibleNextEpisodes = this.predictingNextEpisodeList(episode);
 
+      const tokens = await this.searchToken.getSearchTokens('MANGA');
+
       const mappedPossibleEpisodes = possibleNextEpisodes.map((ep) => ({
         episodeNumber: ep,
-        matchers: this.stringMatchFilterList(ep),
+        matchers: this.stringMatchFilterList(ep, tokens),
       }));
 
       const html = await this.scrapper.extractHtmlFromUrl(url);
@@ -61,26 +65,12 @@ export class FetchForNewEpisodeUseCase {
     }
   }
 
-  public stringMatchFilterList = (episode: number) => {
+  public stringMatchFilterList = (episode: number, tokens: string[]) => {
     const parsedEpisode = episode.toString();
 
     const episodeTokens = Array.from({ length: 4 }).map((_, index) =>
       parsedEpisode.padStart(index, '0'),
     );
-
-    const tokens = [
-      `Episódio `,
-      `Ep `,
-      `Eps `,
-      `episódio `,
-      `ep. `,
-      `Ep `,
-      `Ep. `,
-      `Episódio `,
-      `Episódio `,
-      `EPISODIO `,
-      `EPISÓDIO `,
-    ];
 
     return tokens.flatMap((token) => {
       return episodeTokens.map((episodeToken) => token.concat(episodeToken));

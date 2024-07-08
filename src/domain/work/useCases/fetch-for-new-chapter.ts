@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { NotificationProvider } from '../contracts/notification.provider';
 import { ScrapperProvider } from '../contracts/scrapper.provider';
 import { find, some } from 'lodash';
+import { SearchTokensProvider } from '@app/domain/work/contracts/search-tokens.provider';
 
 export interface CheckWithExistsNewChapterDto {
   id: string;
@@ -18,25 +19,19 @@ export class FetchForNewChapterUseCase {
   constructor(
     private readonly notification: NotificationProvider,
     private readonly scrapper: ScrapperProvider,
+    private readonly searchToken: SearchTokensProvider,
   ) {}
 
-  public stringMatchFilterList = (chapter: number) => {
-    const chapterString = chapter.toString();
+  public stringMatchFilterList = (chapter: number, tokens: string[]) => {
+    const parsedChapter = chapter.toString();
 
-    return [
-      `Capítulo ${chapterString}`,
-      `Cap ${chapterString}`,
-      `cap ${chapterString}`,
-      `capítulo ${chapterString}`,
-      `cap. ${chapterString}`,
-      `Cap. ${chapterString}`,
-      `Cap. ${chapterString}`,
-      `CAP. ${chapterString}`,
-      `CAP.${chapterString}`,
-      `Ch. ${chapterString}`,
-      `CH ${chapterString}`,
-      `ch ${chapterString}`,
-    ];
+    const chapterTokens = Array.from({ length: 4 }).map((_, index) =>
+      parsedChapter.padStart(index, '0'),
+    );
+
+    return tokens.flatMap((token) => {
+      return chapterTokens.map((chapterToken) => token.concat(chapterToken));
+    });
   };
 
   public predictingNextChapterList(currentCap: number) {
@@ -51,9 +46,11 @@ export class FetchForNewChapterUseCase {
 
       this.logger.log(`verify for new chapters ${name} ${cap}`);
 
+      const tokens = await this.searchToken.getSearchTokens('MANGA');
+
       const mappedPossibleChapters = possibleNextChapters.map((cap) => ({
         capNumber: cap,
-        matchers: this.stringMatchFilterList(cap),
+        matchers: this.stringMatchFilterList(cap, tokens),
       }));
 
       const html = await this.scrapper.extractHtmlFromUrl(url);
