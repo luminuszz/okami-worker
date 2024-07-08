@@ -27,7 +27,7 @@ export class OkamiSearchTokensProvider
     }
 
     const results = await this.httpService.axiosRef.get<OkamiSearchToken[]>(
-      `/work/search-tokens?type=${type}`,
+      `/work/search-token?type=${type}`,
     );
 
     this.storage[type] = results.data.map((result) => result.token);
