@@ -5,5 +5,6 @@ module.exports = [
     exec_mode: 'cluster',
     instances: 4,
     exp_backoff_restart_delay: 100,
+    cron_restart: '*/30 * * * *',
   },
 ];
