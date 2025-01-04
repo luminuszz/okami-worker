@@ -40,7 +40,7 @@ FROM base
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y chromium chromium-sandbox && \
+    apt-get install --no-install-recommends -y chromium chromium-sandbox xvfb && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built application
