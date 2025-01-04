@@ -1,8 +1,6 @@
 import { ScrapperProvider } from '@app/domain/work/contracts/scrapper.provider';
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { Browser } from 'puppeteer-core';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { connect } from 'puppeteer-real-browser';
@@ -44,18 +42,6 @@ export class PuppeteerScrapperProvider
       });
 
       const html = await page.content();
-
-      writeFileSync(
-        resolve(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          'temp',
-          `${url.replaceAll('/', '-')}.html`,
-        ),
-        html,
-      );
 
       await page.close();
 
