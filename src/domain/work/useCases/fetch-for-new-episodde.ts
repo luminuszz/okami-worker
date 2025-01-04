@@ -1,8 +1,8 @@
+import { SearchTokensProvider } from '@app/domain/work/contracts/search-tokens.provider';
 import { Injectable, Logger } from '@nestjs/common';
 import { find, some } from 'lodash';
 import { NotificationProvider } from '../contracts/notification.provider';
 import { ScrapperProvider } from '../contracts/scrapper.provider';
-import { SearchTokensProvider } from '@app/domain/work/contracts/search-tokens.provider';
 
 export interface FetchForNewEpisodeUseCaseJobPayload {
   episode: number;
@@ -39,12 +39,10 @@ export class FetchForNewEpisodeUseCase {
         matchers: this.stringMatchFilterList(ep, tokens),
       }));
 
-      console.log(mappedPossibleEpisodes);
-
       const html = await this.scrapper.extractHtmlFromUrl(url);
 
       const newEpisode = find(mappedPossibleEpisodes, (possibleChapter) =>
-        some(possibleChapter.matchers, (string) => html.includes(string)),
+        some(possibleChapter.matchers, (rxg) => rxg.test(html)),
       );
 
       if (!!newEpisode) {
@@ -75,7 +73,9 @@ export class FetchForNewEpisodeUseCase {
     );
 
     return tokens.flatMap((token) => {
-      return episodeTokens.map((episodeToken) => token.concat(episodeToken));
+      return episodeTokens.map(
+        (episodeToken) => new RegExp(`${token}\\s+${episodeToken}`, 'g'),
+      );
     });
   };
 

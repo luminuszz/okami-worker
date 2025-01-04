@@ -1,23 +1,21 @@
-version: "3.7"
+version: '3.7'
 
 services:
   worker:
     deploy:
       resources:
         limits:
-          cpus: "2.0"
-          memory: "2GB"
+          cpus: '2.0'
+          memory: '2GB'
     env_file:
       - .env
     restart: always
+    volumes:
+      - ./temp:/app/temp
     build:
       context: .
-      dockerfile: "./docker/dockerfile.${DOCKERFILE}"
-
-
+      dockerfile: './docker/dockerfile.${DOCKERFILE}'
 
 networks:
   services:
     name: okami_services
-
-  

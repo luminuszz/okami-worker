@@ -1,5 +1,5 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { QueueProvider } from '@app/domain/work/contracts/queue.provider';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 
 import {
@@ -70,14 +70,6 @@ export class SqsQueueProvider implements QueueProvider, OnModuleDestroy {
         this.logger.error(`ocorrreu um erro  ${err.message}`);
 
         this.sentry.captureException(err);
-      });
-
-      consumer.on('message_received', (message) =>
-        this.logger.debug(`Message received: ${JSON.stringify(message.Body)}`),
-      );
-
-      consumer.on('message_processed', () => {
-        this.logger.debug('Message processed');
       });
 
       this.consumers.set(endpoint, consumer);

@@ -1,8 +1,8 @@
+import { SearchTokensProvider } from '@app/domain/work/contracts/search-tokens.provider';
 import { Injectable, Logger } from '@nestjs/common';
+import { find, some } from 'lodash';
 import { NotificationProvider } from '../contracts/notification.provider';
 import { ScrapperProvider } from '../contracts/scrapper.provider';
-import { find, some } from 'lodash';
-import { SearchTokensProvider } from '@app/domain/work/contracts/search-tokens.provider';
 
 export interface CheckWithExistsNewChapterDto {
   id: string;
@@ -30,7 +30,9 @@ export class FetchForNewChapterUseCase {
     );
 
     return tokens.flatMap((token) => {
-      return chapterTokens.map((chapterToken) => token.concat(chapterToken));
+      return chapterTokens.map(
+        (chapterToken) => new RegExp(`${token}\\s+${chapterToken}`, 'g'),
+      );
     });
   };
 
@@ -56,7 +58,9 @@ export class FetchForNewChapterUseCase {
       const html = await this.scrapper.extractHtmlFromUrl(url);
 
       const newChapter = find(mappedPossibleChapters, (possibleChapter) =>
-        some(possibleChapter.matchers, (string) => html.includes(string)),
+        some(possibleChapter.matchers, (regex) => {
+          return regex.test(html);
+        }),
       );
 
       if (!!newChapter) {
