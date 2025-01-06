@@ -60,7 +60,10 @@ export class FetchForNewEpisodeUseCase {
 
       await this.notification.notifyScrappingReport(id, 'success');
     } catch (e) {
-      console.log(e);
+      this.logger.error(
+        `Error on fetch for new chapter ${name} ${episode}`,
+        e.message,
+      );
       await this.notification.notifyScrappingReport(id, 'error');
     }
   }
