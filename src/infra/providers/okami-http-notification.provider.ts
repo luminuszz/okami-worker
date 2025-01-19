@@ -1,6 +1,6 @@
 import { NotificationProvider } from '@app/domain/work/contracts/notification.provider';
-import { Injectable, Logger } from '@nestjs/common';
 import { QueueProvider } from '@app/domain/work/contracts/queue.provider';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class OkamiHttpNotificationProvider implements NotificationProvider {
@@ -21,6 +21,7 @@ export class OkamiHttpNotificationProvider implements NotificationProvider {
   async notifyScrappingReport(
     workId: string,
     status: 'success' | 'error',
+    message?: string,
   ): Promise<void> {
     this.logger.log(
       `Notifying scrapping report for work ${workId} with status ${status}`,
@@ -29,6 +30,7 @@ export class OkamiHttpNotificationProvider implements NotificationProvider {
     await this.queueProvider.publish('refresh-work-scrapping-status', {
       workId,
       status,
+      message: message || null,
     });
   }
 }

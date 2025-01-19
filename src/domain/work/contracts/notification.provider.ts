@@ -7,5 +7,6 @@ export abstract class NotificationProvider {
   abstract notifyScrappingReport(
     workId: string,
     status: 'success' | 'error',
+    message?: string,
   ): Promise<void>;
 }

@@ -64,7 +64,11 @@ export class FetchForNewEpisodeUseCase {
         `Error on fetch for new chapter ${name} ${episode}`,
         e.message,
       );
-      await this.notification.notifyScrappingReport(id, 'error');
+      await this.notification.notifyScrappingReport(
+        id,
+        'error',
+        JSON.stringify(e.message),
+      );
     }
   }
 

@@ -83,7 +83,11 @@ export class FetchForNewChapterUseCase {
         JSON.stringify(e.message),
       );
 
-      await this.notification.notifyScrappingReport(id, 'error');
+      await this.notification.notifyScrappingReport(
+        id,
+        'error',
+        JSON.stringify(e.message),
+      );
     }
   }
 }
