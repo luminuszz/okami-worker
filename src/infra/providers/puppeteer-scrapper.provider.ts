@@ -1,17 +1,15 @@
 import { ScrapperProvider } from '@app/domain/work/contracts/scrapper.provider';
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { load } from 'cheerio';
 import { Browser } from 'puppeteer-core';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { connect } from 'puppeteer-real-browser';
+import { providersSelectors } from '@app/constants';
 
 @Injectable()
 export class PuppeteerScrapperProvider
   implements ScrapperProvider, OnModuleDestroy
 {
-  constructor(private readonly config: ConfigService) {}
-
   async onModuleDestroy() {
     if (this.browser) {
       await this.browser.close();
@@ -44,7 +42,7 @@ export class PuppeteerScrapperProvider
 
       const htmlRaw = await page.content();
 
-      // this phase of sites using server-side rendering
+      // this phase of sites using server-side rendering ${evalResults}
 
       const evalResults = await page.evaluate(() => {
         const doc = new DOMParser().parseFromString(
@@ -57,13 +55,29 @@ export class PuppeteerScrapperProvider
 
       await page.close();
 
+      const providerSelector = Object.entries(providersSelectors).find(
+        ([key]) => url.includes(key),
+      );
+
+      if (!!providerSelector?.length) {
+        const [provider, existsSelector] = providerSelector;
+
+        this.logger.log(`Selector found: ${provider} ${existsSelector}`);
+
+        const $serverSideHtml = load(evalResults)(existsSelector);
+
+        return htmlRaw.concat($serverSideHtml.html());
+      }
+
       const parsedHtml = load(evalResults);
 
       return htmlRaw.concat(parsedHtml.html());
     } catch (e) {
+      console.log(e);
       throw {
         message: e.message,
         url,
+        stack: e,
       };
     }
   }

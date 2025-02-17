@@ -12,6 +12,7 @@ services:
     restart: always
     volumes:
       - ./temp:/app/temp
+      - ./src:/app/src
     build:
       context: .
       dockerfile: './docker/dockerfile.${DOCKERFILE}'

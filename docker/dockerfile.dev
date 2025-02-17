@@ -1,21 +1,33 @@
-FROM node
+FROM node:latest
 
-WORKDIR app
+RUN corepack enable
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV WORKER_DIR=$WORKER_DIR
+
+
+RUN apt-get update && apt-get install -y \
+  wget \
+  gnupg \
+  ca-certificates \
+  apt-transport-https \
+  xvfb libx11-dev   \
+  && rm -rf /var/lib/apt/lists/*
+
+
 
 COPY ./package.json .
 
-RUN apt-get update && apt-get install gnupg wget -y && \
-  wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google-archive.gpg && \
-  sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
-  apt-get update && \
-  apt-get install google-chrome-stable -y --no-install-recommends && \
-  rm -rf /var/lib/apt/lists/*
+# Install Google Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
+  && apt-get update \
+  && apt-get install -y google-chrome-stable \
+  && rm -rf /var/lib/apt/lists/*
 
 
-COPY . .
+WORKDIR /app
+
+
+COPY . /app
 
 RUN corepack enable
 
